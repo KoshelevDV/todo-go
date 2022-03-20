@@ -5,14 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strings"
+)
+
+var (
+	HOMEDIR, _ = os.UserHomeDir()
 )
 
 func main() {
 	list := list{}
-	ok := CheckData("./data.json")
+	ok := CheckData(path.Join(HOMEDIR, ".todoist/data.json"))
 	if ok {
-		list = *Load("./data.json")
+		list = *Load(path.Join(HOMEDIR, ".todoist/data.json"))
+	} else {
+		err := os.MkdirAll(path.Join(HOMEDIR, ".todoist/"), 0744)
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	cmd := os.Args[1:]
 	if len(cmd) < 1 {
@@ -34,6 +44,13 @@ func main() {
 			fmt.Println(">>> main.go >>>,", err)
 		}
 		list = append([]task(list), *tt)
+		list.Save()
+	case "set":
+		if len(cmd) < 3 {
+			fmt.Println("No field specified.\ntodoist show status [complete | \"on track\" | behind | \"not started\"]")
+			return
+		}
+		list.SetStatus(cmd[2], cmd[3])
 		list.Save()
 	default:
 		fmt.Printf("Unknow command\n")

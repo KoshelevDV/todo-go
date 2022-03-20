@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 )
@@ -51,12 +52,41 @@ func (l list) ShowOne(s string) {
 	fmt.Println(l[id-1].String())
 }
 
+// COMPLETED   = "completed"
+// ON_TRACK    = "on track"
+// BEHIND      = "behind"
+// NOT_STARTED = "not yet started"
+
+func (l list) SetStatus(_id, s string) {
+	id, err := strconv.Atoi(_id)
+	if err != nil {
+		fmt.Printf("Incorrect id %s\n", _id)
+		return
+	}
+	id -= 1
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case COMPLETED:
+		l[id].Status = COMPLETED
+	case ON_TRACK:
+		l[id].Status = ON_TRACK
+	case BEHIND:
+		l[id].Status = BEHIND
+	case NOT_STARTED:
+		l[id].Status = NOT_STARTED
+	default:
+		fmt.Println(`Unknow status. You should use one of the next: "completed" "on track" "behind" "not yet started"`)
+	}
+}
+
 func (l *list) Save() {
 	res, err := json.MarshalIndent(l, "", "  ")
 	if err != nil {
 		panic(err)
 	}
-	os.WriteFile("data.json", res, 0644)
+	err = os.WriteFile(path.Join(HOMEDIR, ".todoist", "data.json"), res, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func Load(path string) *list {
