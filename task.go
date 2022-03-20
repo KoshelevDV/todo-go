@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"strings"
 )
 
@@ -34,12 +32,12 @@ func NewTask(t string, c string, cd timestamp, ud timestamp, s string) *task {
 
 func (t task) String() string {
 	var sb strings.Builder
-	sb.WriteString("# ")
+	sb.WriteString("Title:         ")
 	sb.WriteString(t.Title)
 	sb.WriteRune('\n')
 
 	if t.Comment != "" {
-		sb.WriteString("- ")
+		sb.WriteString("Comment:       ")
 		sb.WriteString(t.Comment)
 		sb.WriteRune('\n')
 	}
@@ -59,7 +57,8 @@ func (t task) String() string {
 	return sb.String()
 }
 
-func (t *task) Save() {
-	res, _ := json.MarshalIndent(t, "", "  ")
-	fmt.Println(string(res))
-}
+// Not used
+// func (t *task) Save() {
+// 	res, _ := json.MarshalIndent(t, "", "  ")
+// 	fmt.Println(string(res))
+// }

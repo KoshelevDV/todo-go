@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -21,7 +22,7 @@ func (l list) String() string {
 func (l list) ShowAll() {
 	var str strings.Builder
 	for i := range l {
-		temp := fmt.Sprintf("%03d. %s\n", i, l[i].Title)
+		temp := fmt.Sprintf("%d\n%s\n", i+1, l[i].String())
 		str.WriteString(temp)
 	}
 	fmt.Print(string(str.String()))
@@ -31,11 +32,23 @@ func (l list) ShowShort() {
 	var str strings.Builder
 	for i := range l {
 		if l[i].Status != BEHIND {
-			temp := fmt.Sprintf("%03d. %s\n", i, l[i].Title)
+			temp := fmt.Sprintf("%d. %s\n", i+1, l[i].Title)
 			str.WriteString(temp)
 		}
 	}
 	fmt.Print(string(str.String()))
+}
+
+func (l list) ShowOne(s string) {
+	id, err := strconv.Atoi(s)
+	if err != nil {
+		fmt.Printf("Incorrect id %s\n", s)
+	}
+	if id > len(l) || id-1 < 0 {
+		fmt.Printf("ToDo id is out of scope. Max id is %d\n", len(l))
+		return
+	}
+	fmt.Println(l[id-1].String())
 }
 
 func (l *list) Save() {
