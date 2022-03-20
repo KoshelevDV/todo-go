@@ -6,12 +6,30 @@ import (
 	"strings"
 )
 
+const (
+	COMPLETED   = "completed"
+	ON_TRACK    = "on track"
+	BEHIND      = "behind"
+	NOT_STARTED = "not yet started"
+)
+
 type task struct {
 	Title        string
 	Comment      string
 	CreationDate timestamp
 	UntilDate    timestamp
 	Status       string
+}
+
+func NewTask(t string, c string, cd timestamp, ud timestamp, s string) *task {
+	task := task{
+		Title:        t,
+		Comment:      c,
+		CreationDate: cd,
+		UntilDate:    ud,
+		Status:       s,
+	}
+	return &task
 }
 
 func (t task) String() string {
