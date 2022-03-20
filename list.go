@@ -12,18 +12,28 @@ type list []task
 func (l list) String() string {
 	var str strings.Builder
 	for i := range l {
-
 		str.WriteString(l[i].String())
 		str.WriteRune('\n')
 	}
 	return str.String()
 }
 
-func (l list) ShowShort() {
+func (l list) ShowAll() {
 	var str strings.Builder
 	for i := range l {
 		temp := fmt.Sprintf("%03d. %s\n", i, l[i].Title)
 		str.WriteString(temp)
+	}
+	fmt.Print(string(str.String()))
+}
+
+func (l list) ShowShort() {
+	var str strings.Builder
+	for i := range l {
+		if l[i].Status != BEHIND {
+			temp := fmt.Sprintf("%03d. %s\n", i, l[i].Title)
+			str.WriteString(temp)
+		}
 	}
 	fmt.Print(string(str.String()))
 }
@@ -33,7 +43,6 @@ func (l *list) Save() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(res))
 	os.WriteFile("data.json", res, 0644)
 }
 
