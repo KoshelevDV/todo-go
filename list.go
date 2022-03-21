@@ -52,11 +52,6 @@ func (l list) ShowOne(s string) {
 	fmt.Println(l[id-1].String())
 }
 
-// COMPLETED   = "completed"
-// ON_TRACK    = "on track"
-// BEHIND      = "behind"
-// NOT_STARTED = "not yet started"
-
 func (l list) SetStatus(_id, s string) {
 	id, err := strconv.Atoi(_id)
 	if err != nil {
@@ -78,7 +73,7 @@ func (l list) SetStatus(_id, s string) {
 	}
 }
 
-func (l *list) Save() {
+func (l list) Save() {
 	res, err := json.MarshalIndent(l, "", "  ")
 	if err != nil {
 		panic(err)
@@ -89,9 +84,8 @@ func (l *list) Save() {
 	}
 }
 
-func Load(path string) *list {
+func Load(path string) (r *list) {
 	f, _ := os.ReadFile(path)
-	var r list
 	json.Unmarshal(f, &r)
-	return &r
+	return r
 }

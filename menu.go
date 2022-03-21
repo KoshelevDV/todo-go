@@ -2,20 +2,97 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 )
 
-func CreateToDo() (t *task, err error) {
+func Menu(args []string, list list) {
+	cmd := os.Args[1:]
+	if len(cmd) < 1 {
+		return
+	}
+
+	switch cmd[0] {
+	case "show":
+		Show(cmd, list)
+	case "short":
+		Short(list)
+	case "add":
+		Add(list)
+	case "set":
+		Set(cmd, list)
+	default:
+		fmt.Printf("Unknow command\n")
+	}
+}
+
+func InteractiveMenu(cmd []string, list list) {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		cmd := strings.Fields(scanner.Text())
+
+		switch cmd[0] {
+		case "show":
+			Show(cmd, list)
+		case "short":
+			Short(list)
+		case "add":
+			Add(list)
+		case "set":
+
+		default:
+			fmt.Printf("Unknow command\n")
+		}
+	}
+}
+
+func Show(cmd []string, list list) {
+	if len(cmd) < 2 {
+		fmt.Println("No id specified.\ntodoist show <N>")
+		return
+	}
+	list.ShowOne(cmd[1])
+}
+
+func Short(list list) {
+	list.ShowShort()
+}
+
+func Add(list list) {
+	tt, err := CreateToDo()
+	if err != nil {
+		fmt.Println(">>> main.go >>>,", err)
+	}
+	list = append([]task(list), *tt)
+	list.Save()
+}
+
+func Set(cmd []string, list list) {
+	if len(cmd) < 3 {
+		fmt.Println("No field specified.\ntodoist show status [complete | \"on track\" | behind | \"not started\"]")
+		return
+	}
+	list.SetStatus(cmd[2], cmd[3])
+	list.Save()
+}
+
+func CheckData(p string) bool {
+	_, err := os.Stat(p)
+	return !errors.Is(err, os.ErrNotExist)
+}
+
+func CreateToDo() (*task, error) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	title := readString("Enter ToDo title: ", scanner)
 	comment := readString("Enter comment for ToDo: ", scanner)
 	untilDate, err := readTime("Write date until you have to complete your ToDo (format: yyyy/mm/dd hh:mm): ", scanner)
 	if err != nil {
-		return t, err
+		return nil, err
 	}
 	status := NOT_STARTED
 
