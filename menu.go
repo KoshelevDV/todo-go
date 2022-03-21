@@ -13,7 +13,7 @@ func CreateToDo() (t *task, err error) {
 
 	title := readString("Enter ToDo title: ", scanner)
 	comment := readString("Enter comment for ToDo: ", scanner)
-	untilDate, err := readTime("Write date until you have to complete your ToDo (format: dd/mm/yyyy hh:mm): ", scanner)
+	untilDate, err := readTime("Write date until you have to complete your ToDo (format: yyyy/mm/dd hh:mm): ", scanner)
 	if err != nil {
 		return t, err
 	}
